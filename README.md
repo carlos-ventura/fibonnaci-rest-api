@@ -1,2 +1,2 @@
-# fibonnaci-rest-api
+# fibonacci-rest-api
 Fibonacci REST JSON API
