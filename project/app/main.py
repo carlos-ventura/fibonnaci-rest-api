@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from app.tasks import fibonacci_task
 
 app = FastAPI()
 
 
 @app.get("/fibonacci/")
 async def fibonacci(number: int):
-    return
+    fibonacci_number = await fibonacci_task(number)
+    return { "fibonacci_number" : fibonacci_number }
 
 @app.get("/fibonacci/list")
 async def fibonacci_list(number: int):
