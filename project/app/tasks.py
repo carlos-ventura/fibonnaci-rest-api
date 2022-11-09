@@ -21,17 +21,17 @@ async def fibonacci_v2(number: int) -> int:
     return start_n
 
 
-async def fibonacci_task_v2(number: int) -> int:
+async def fibonacci_task_v2(number: int, db: Session) -> int:
     handle_input(number)
-    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    blacklist = [el.number for el in await fibonacci_blacklist_task(db)]
     if number in blacklist:
         raise HTTPException(status_code=404, detail="Number is blacklisted")
     return await fibonacci_v2(number)
 
 
-async def fibonacci_task(number: int) -> int:
+async def fibonacci_task(number: int, db: Session) -> int:
     handle_input(number)
-    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    blacklist = [el.number for el in await fibonacci_blacklist_task(db)]
     if number in blacklist:
         raise HTTPException(status_code=404, detail="Number is blacklisted")
     result = 0
@@ -43,9 +43,9 @@ async def fibonacci_task(number: int) -> int:
     return result
 
 
-async def fibonacci_task_pairs(number: int) -> List[FibonacciPair]:
+async def fibonacci_task_pairs(number: int, db: Session) -> List[FibonacciPair]:
     handle_input(number=number, zero_allowed=False)
-    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    blacklist = [el.number for el in await fibonacci_blacklist_task(db)]
     filtered_numbers = [n for n in range(1, number + 1) if n not in blacklist]
 
     if not filtered_numbers:
@@ -59,10 +59,10 @@ async def fibonacci_task_pairs(number: int) -> List[FibonacciPair]:
     ]
 
 
-async def fibonacci_task_pairs_v2(number: int) -> List[FibonacciPair]:
+async def fibonacci_task_pairs_v2(number: int, db: Session) -> List[FibonacciPair]:
     handle_input(number=number, zero_allowed=False)
     fibonacci_list: List[FibonacciPair] = []
-    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    blacklist = [el.number for el in await fibonacci_blacklist_task(db)]
 
     if len(blacklist) >= number:
         raise HTTPException(
@@ -77,24 +77,24 @@ async def fibonacci_task_pairs_v2(number: int) -> List[FibonacciPair]:
     return fibonacci_list
 
 
-async def add_to_blacklist_task(number: int):
+async def add_to_blacklist_task(number: int, db: Session):
     handle_input(number)
-    async with async_session() as session:
+    async with db as session:
         async with session.begin():
             blacklist_dal = BlacklistDAL(session)
             await blacklist_dal.add_blacklist_number(number)
 
 
-async def delete_from_blacklist_task(number: int):
+async def delete_from_blacklist_task(number: int, db: Session):
     handle_input(number)
-    async with async_session() as session:
+    async with db as session:
         async with session.begin():
             blacklist_dal = BlacklistDAL(session)
             await blacklist_dal.delete_blacklist_number(number)
 
 
-async def fibonacci_blacklist_task() -> List[int]:
-    async with async_session() as session:
+async def fibonacci_blacklist_task(db: Session) -> List[int]:
+    async with db as session:
         async with session.begin():
             blacklist_dal = BlacklistDAL(session)
             return await blacklist_dal.get_all_blacklist_numbers()
