@@ -1,6 +1,5 @@
 from typing import List
 
-import sqlalchemy
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
@@ -13,11 +12,8 @@ class BlacklistDAL():
 
     async def add_blacklist_number(self, number: int):
         blacklist_number = Blacklist(number=number)
-        self.db_session.add(blacklist_number)
-        try:
-            await self.db_session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            pass
+        await self.db_session.merge(blacklist_number)
+        await self.db_session.commit()
 
     async def get_all_blacklist_numbers(self) -> List[int]:
         blacklist_all_entries = await self.db_session.execute(
