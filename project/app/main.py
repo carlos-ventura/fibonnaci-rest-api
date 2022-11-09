@@ -17,12 +17,12 @@ app = FastAPI(
 Page = BasePage.with_custom_options(size=100)
 
 
-async def get_db():
+async def get_session():
     try:
-        db = async_session()
-        yield db
+        session = async_session()
+        yield session
     finally:
-        await db.close()
+        await session.close()
 
 
 @app.on_event("startup")
@@ -33,30 +33,30 @@ async def startup():
 
 
 @app.get("/fibonacci/")
-async def fibonacci(number: int, db: Session = Depends(get_db)):
-    fibonacci_number = await fibonacci_task(number, db)
+async def fibonacci(number: int, session: Session = Depends(get_session)):
+    fibonacci_number = await fibonacci_task(number, session)
     return {"fibonacci_number": fibonacci_number}
 
 
 @app.get("/fibonacci/list", response_model=Page[FibonacciPair])
-async def fibonacci_list(number: int,  db: Session = Depends(get_db)):
-    fibonacci_pairs = await fibonacci_task_pairs(number, db)
+async def fibonacci_list(number: int,  session: Session = Depends(get_session)):
+    fibonacci_pairs = await fibonacci_task_pairs(number, session)
     return paginate(fibonacci_pairs)
 
 
 @app.post("/fibonacci/add_to_blacklist")
-async def add_to_blacklist(number: int,  db: Session = Depends(get_db)):
-    await add_to_blacklist_task(number, db)
+async def add_to_blacklist(number: int,  session: Session = Depends(get_session)):
+    await add_to_blacklist_task(number, session)
 
 
 @app.delete("/fibonacci/delete_from_blacklist")
-async def delete_from_blacklist(number: int,  db: Session = Depends(get_db)):
-    await delete_from_blacklist_task(number, db)
+async def delete_from_blacklist(number: int,  session: Session = Depends(get_session)):
+    await delete_from_blacklist_task(number, session)
 
 
 @app.get("/fibonacci/blacklist")
-async def fibonacci_blacklist(db: Session = Depends(get_db)):
-    return await fibonacci_blacklist_task(db)
+async def fibonacci_blacklist(session: Session = Depends(get_session)):
+    return await fibonacci_blacklist_task(session)
 
 
 add_pagination(app)
