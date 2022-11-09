@@ -20,3 +20,10 @@ async def add_to_blacklist_task(number: int):
             blacklist_dal = BlacklistDAL(session)
             await blacklist_dal.add_blacklist_number(number)
 
+async def delete_from_blacklist_task(number: int):
+    handle_input(number)
+    async with async_session() as session:
+        async with session.begin():
+            blacklist_dal = BlacklistDAL(session)
+            await blacklist_dal.delete_blacklist_number(number)
+
