@@ -21,3 +21,9 @@ class BlacklistDAL():
     async def get_all_blacklist_numbers(self) -> List[int]:
         q = await self.db_session.execute(select(Blacklist).order_by(Blacklist.number))
         return list(q.scalars().all())
+
+    async def delete_blacklist_number(self, number: int):
+        q = await self.db_session.get(Blacklist, number)
+        if q:
+            await self.db_session.delete(q)
+            await self.db_session.commit()
