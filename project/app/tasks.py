@@ -27,3 +27,8 @@ async def delete_from_blacklist_task(number: int):
             blacklist_dal = BlacklistDAL(session)
             await blacklist_dal.delete_blacklist_number(number)
 
+async def fibonacci_blacklist_task() -> List[int]:
+    async with async_session() as session:
+        async with session.begin():
+            blacklist_dal = BlacklistDAL(session)
+            return await blacklist_dal.get_all_blacklist_numbers()
