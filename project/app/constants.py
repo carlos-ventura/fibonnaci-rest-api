@@ -13,4 +13,6 @@ DESCRIPTION = """
 
    * **Delete From Blacklist** - Deletes a number from the blacklist
 
+   * **Blacklist** - Returns the list of blacklisted numbers
+
    """
