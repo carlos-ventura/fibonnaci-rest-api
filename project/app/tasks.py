@@ -2,6 +2,8 @@ import asyncio
 from typing import List
 from cache import AsyncLRU
 
+from fastapi import HTTPException
+
 from app.models import FibonacciPair
 from app.utils import handle_input
 from app.db.dals.blacklist_dal import BlacklistDAL
@@ -13,7 +15,11 @@ async def fibonacci(number: int) -> int:
 
 
 async def fibonacci_task(number: int) -> int:
-    return number if number < 2 else await fibonacci_task(number - 1) + await fibonacci_task(number - 2)
+    handle_input(number)
+    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    if number in blacklist:
+        raise HTTPException(status_code=404, detail="Number is blacklisted")
+    return await fibonacci(number)
 
 async def fibonacci_task_pairs(number: int) -> List[FibonacciPair]:
     results = await asyncio.gather(*[fibonacci_task(n) for n in range(1, number + 1)])
