@@ -1,13 +1,12 @@
 import asyncio
 from typing import List
-from cache import AsyncLRU
 
-from fastapi import HTTPException
-
+from app.db.dals.blacklist_dal import BlacklistDAL
 from app.models import FibonacciPair
 from app.utils import handle_input
-from app.db.dals.blacklist_dal import BlacklistDAL
-from app.db.config import async_session
+from cache import AsyncLRU
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
 
 @AsyncLRU()

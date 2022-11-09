@@ -1,6 +1,5 @@
-from sqlalchemy import Column, Integer
-
 from app.db.config import Base
+from sqlalchemy import Column, Integer
 
 
 class Blacklist(Base):

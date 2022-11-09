@@ -1,9 +1,8 @@
 from typing import List
 
+from app.db.models.blacklist import Blacklist
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
-
-from app.db.models.blacklist import Blacklist
 
 
 class BlacklistDAL():

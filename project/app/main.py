@@ -1,16 +1,13 @@
-from fastapi import FastAPI
-from fastapi_pagination import Page as BasePage, paginate, add_pagination
-
-from app.tasks import (
-    fibonacci_task,
-    fibonacci_task_pairs,
-    add_to_blacklist_task,
-    delete_from_blacklist_task,
-    fibonacci_blacklist_task
-)
-from app.models import FibonacciPair
-from app.db.config import Base, engine
 from app.constants import DESCRIPTION
+from app.db.config import Base, async_session, engine
+from app.models import FibonacciPair
+from app.tasks import (add_to_blacklist_task, delete_from_blacklist_task,
+                       fibonacci_blacklist_task, fibonacci_task,
+                       fibonacci_task_pairs)
+from fastapi import Depends, FastAPI
+from fastapi_pagination import Page as BasePage
+from fastapi_pagination import add_pagination, paginate
+from sqlalchemy.orm import Session
 
 app = FastAPI(
     title="Fibonacci",
