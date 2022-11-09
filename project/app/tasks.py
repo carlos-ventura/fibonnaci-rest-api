@@ -22,6 +22,14 @@ async def fibonacci_v2(number: int) -> int:
     return start_n
 
 
+async def fibonacci_task_v2(number: int) -> int:
+    handle_input(number)
+    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    if number in blacklist:
+        raise HTTPException(status_code=404, detail="Number is blacklisted")
+    return await fibonacci_v2(number)
+
+
 async def fibonacci_task(number: int) -> int:
     handle_input(number)
     blacklist = [el.number for el in await fibonacci_blacklist_task()]
