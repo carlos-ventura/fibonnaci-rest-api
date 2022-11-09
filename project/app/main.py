@@ -11,7 +11,25 @@ from app.tasks import (
 from app.models import FibonacciPair
 from app.db.config import Base, engine
 
-app = FastAPI()
+description = """
+   Fibonacci API
+
+   ## Items
+
+   * **Fibonacci** - Returns the value from the Fibonacci sequence for a given number.
+
+   * **Fibonacci List** - Returns a list of numbers and the corresponding values from the Fibonacci sequence from 1 to N
+
+   * **Add To Blacklist** - Adds a number to the blacklist (numbers not allowed to calculate the value from the Fibonacci sequence)
+
+   * **Delete From Blacklist** - Deletes a number from the blacklist
+
+   """
+
+app = FastAPI(
+    title="Fibonacci",
+    description=description,
+)
 
 Page = BasePage.with_custom_options(size=100)
 
