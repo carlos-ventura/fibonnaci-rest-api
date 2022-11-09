@@ -1,4 +1,7 @@
+from typing import List
+
 import sqlalchemy
+from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from app.db.models.blacklist import Blacklist
@@ -14,3 +17,7 @@ class BlacklistDAL():
             await self.db_session.commit()
         except sqlalchemy.exc.IntegrityError:
             pass
+
+    async def get_all_blacklist_numbers(self) -> List[int]:
+        q = await self.db_session.execute(select(Blacklist).order_by(Blacklist.number))
+        return list(q.scalars().all())
