@@ -1,17 +1,26 @@
 from fastapi import FastAPI
-from fastapi_pagination import Page as BasePage, Params, paginate, add_pagination
+from fastapi_pagination import Page as BasePage, paginate, add_pagination
 
 from app.tasks import fibonacci_task, fibonacci_task_pairs
 from app.models import FibonacciPair
+from app.db.config import Base, engine
 
 app = FastAPI()
 
 Page = BasePage.with_custom_options(size=100)
 
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        # await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
+
 @app.get("/fibonacci/")
 async def fibonacci(number: int):
     fibonacci_number = await fibonacci_task(number)
     return { "fibonacci_number" : fibonacci_number }
+
 
 @app.get("/fibonacci/list", response_model=Page[FibonacciPair])
 async def fibonacci_list(number: int):
