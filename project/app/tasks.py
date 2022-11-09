@@ -27,7 +27,13 @@ async def fibonacci_task(number: int) -> int:
     blacklist = [el.number for el in await fibonacci_blacklist_task()]
     if number in blacklist:
         raise HTTPException(status_code=404, detail="Number is blacklisted")
-    return await fibonacci(number)
+    result = 0
+    try:
+        result = await fibonacci(number)
+    except RecursionError as e:
+        raise HTTPException(
+            status_code=500, detail=str(e)) from e
+    return result
 
 
 async def fibonacci_task_pairs(number: int) -> List[FibonacciPair]:
