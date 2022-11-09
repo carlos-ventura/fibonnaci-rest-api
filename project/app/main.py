@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi_pagination import Page as BasePage, paginate, add_pagination
 
-from app.tasks import fibonacci_task, fibonacci_task_pairs
+from app.tasks import fibonacci_task, fibonacci_task_pairs, add_to_blacklist_task, delete_from_blacklist_task, fibonacci_blacklist_task
 from app.models import FibonacciPair
 from app.db.config import Base, engine
 
@@ -27,12 +27,20 @@ async def fibonacci_list(number: int):
     fibonacci_pairs = await fibonacci_task_pairs(number)
     return paginate(fibonacci_pairs)
 
-@app.post("/fibonacci/blacklist")
+
+@app.post("/fibonacci/add_to_blacklist")
 async def add_to_blacklist(number: int):
-    return
+    await add_to_blacklist_task(number)
+
 
 @app.delete("/fibonacci/delete_from_blacklist")
 async def delete_from_blacklist(number: int):
-    return
+    await delete_from_blacklist_task(number)
+
+
+@app.get("/fibonacci/blacklist")
+async def fibonacci_blacklist():
+    return await fibonacci_blacklist_task()
+
 
 add_pagination(app)
