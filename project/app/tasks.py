@@ -22,8 +22,16 @@ async def fibonacci_task(number: int) -> int:
     return await fibonacci(number)
 
 async def fibonacci_task_pairs(number: int) -> List[FibonacciPair]:
-    results = await asyncio.gather(*[fibonacci_task(n) for n in range(1, number + 1)])
-    return [ FibonacciPair(number=i+1, fibonacci_number=results[i]) for i in range(len(results))]
+    handle_input(number=number, zero_allowed=False)
+    blacklist = [el.number for el in await fibonacci_blacklist_task()]
+    filtered_numbers = [n for n in range(1, number + 1) if n not in blacklist]
+
+    if not filtered_numbers:
+        raise HTTPException(status_code=404, detail="All numbers are blacklisted")
+
+    results = await asyncio.gather(*[fibonacci(n) for n in filtered_numbers])
+    return [ FibonacciPair(number=filtered_numbers[i], fibonacci_number=results[i]) for i in range(len(results))]
+
 
 async def add_to_blacklist_task(number: int):
     handle_input(number)
