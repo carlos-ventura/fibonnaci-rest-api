@@ -1,10 +1,16 @@
 import asyncio
 from typing import List
+from cache import AsyncLRU
 
 from app.models import FibonacciPair
 from app.utils import handle_input
 from app.db.dals.blacklist_dal import BlacklistDAL
 from app.db.config import async_session
+
+@AsyncLRU()
+async def fibonacci(number: int) -> int:
+    return number if number < 2 else await fibonacci(number - 1) + await fibonacci(number - 2)
+
 
 async def fibonacci_task(number: int) -> int:
     return number if number < 2 else await fibonacci_task(number - 1) + await fibonacci_task(number - 2)
